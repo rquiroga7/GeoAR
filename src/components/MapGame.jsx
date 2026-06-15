@@ -158,11 +158,15 @@ function MapGame({ onBack, onRoundEnd }) {
     const maxScore = total * 10
     const score = trophiesRef.current
     const currentLevel = streakRef.current + 1
+    const maxLevelIdx = LEVEL_SIZES.length - 1
+    const isMaxLevel = streakRef.current >= maxLevelIdx
 
     let levelResult = 'fail'
     if (score >= maxScore * 0.8) {
       levelResult = 'pass'
-      streakRef.current = streakRef.current + 1
+      if (!isMaxLevel) {
+        streakRef.current = streakRef.current + 1
+      }
       fireworks.launchLoop()
       sound.playVictory()
     } else if (score >= maxScore * 0.5) {
@@ -172,7 +176,7 @@ function MapGame({ onBack, onRoundEnd }) {
 
     setStreak(streakRef.current)
     onRoundEnd('map', score, maxScore)
-    setResultData({ correct, total, maxScore, score, currentLevel, levelResult })
+    setResultData({ correct, total, maxScore, score, currentLevel, levelResult, isMaxLevel })
     setShowResult(true)
   }
 
@@ -276,16 +280,25 @@ function MapGame({ onBack, onRoundEnd }) {
                     {resultData.levelResult === 'good' && '¡Bien hecho!'}
                     {resultData.levelResult === 'fail' && '¡Seguí intentando!'}
                   </h2>
-                  {resultData.levelResult === 'pass' && (
+                  {resultData.levelResult === 'pass' && !resultData.isMaxLevel && (
                     <p className="level-up-text">¡Excelentes respuestas! Pasando a nivel {resultData.currentLevel + 1} de dificultad</p>
                   )}
+                  {resultData.levelResult === 'pass' && resultData.isMaxLevel && (() => {
+                    const rank = getRank(resultData.score, resultData.maxScore)
+                    const isLegend = rank?.name === 'Leyenda Supersónica'
+                    return isLegend ? (
+                      <p className="level-up-text" style={{ color: '#FFD700', fontSize: '1.2rem' }}>🌟 ¡Leyenda Supersónica! 🌟 Completaste todos los departamentos con una puntuación perfecta. ¡Sos un verdadero maestro de la geografía cordobesa!</p>
+                    ) : (
+                      <p className="level-up-text" style={{ color: '#6C63FF' }}>¡Completaste todos los niveles! Sos un verdadero experto en los departamentos de Córdoba.</p>
+                    )
+                  })()}
                   {resultData.levelResult === 'good' && (
                     <p className="level-up-text" style={{ color: '#FFD600' }}>¡Muy bien! Pero podés mejorar, intentá de nuevo</p>
                   )}
                   {resultData.levelResult === 'fail' && (
                     <p className="level-up-text" style={{ color: '#FF6584' }}>No te preocupes, ¡practicando vas a mejorar!</p>
                   )}
-                  <p className="score-text">{resultData.correct} de {resultData.total} correctas ({Math.round(resultData.correct / resultData.total * 100)}%)</p>
+                  <p className="score-text">{Object.values(deptAttempts).filter(v => v === 0).length} de {resultData.total} correctas en el primer intento</p>
                   <div className="trophies-earned">🏆 {resultData.score} de {resultData.maxScore} puntos posibles</div>
                   {(() => {
                     const r = getRank(resultData.score, resultData.maxScore)
@@ -300,9 +313,18 @@ function MapGame({ onBack, onRoundEnd }) {
                     <span><span className="legend-dot" style={{ background: '#FF9100' }}></span> Estudiar</span>
                   </div>
                   <div className="buttons">
-                    <button className="btn" onClick={handlePlayAgain}>
-                      {resultData.levelResult === 'pass' ? 'Siguiente nivel' : 'Intentar de nuevo'}
-                    </button>
+                    {resultData.levelResult === 'pass' && !resultData.isMaxLevel && (
+                      <button className="btn" onClick={handlePlayAgain}>Siguiente nivel</button>
+                    )}
+                    {resultData.levelResult === 'pass' && resultData.isMaxLevel && (() => {
+                      const rank = getRank(resultData.score, resultData.maxScore)
+                      return rank?.name === 'Leyenda Supersónica' ? null : (
+                        <button className="btn" onClick={handlePlayAgain}>Jugar de nuevo</button>
+                      )
+                    })()}
+                    {resultData.levelResult !== 'pass' && (
+                      <button className="btn" onClick={handlePlayAgain}>Intentar de nuevo</button>
+                    )}
                     <button className="btn btn-secondary" onClick={handleBack}>Volver al menú</button>
                 </div>
               </div>
