@@ -34,8 +34,8 @@ function Menu({ onSelectMode }) {
   return (
     <div className="menu">
       <div className="menu-logo">🗺️</div>
-      <h1 className="menu-title">GeoAprende Córdoba</h1>
-      <p className="menu-subtitle">Aprende los departamentos y cabeceras de la provincia de Córdoba</p>
+      <h1 className="menu-title">GeoAR</h1>
+      <p className="menu-subtitle">Aprendé los departamentos y cabeceras de las provincias Argentinas</p>
 
       <div className="mode-cards">
         <div className="mode-card" onClick={() => onSelectMode('map')}>
