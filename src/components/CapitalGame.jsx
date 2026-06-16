@@ -60,6 +60,7 @@ function CapitalGame({ onBack, onRoundEnd }) {
   const [deptAttempts, setDeptAttempts] = useState({})
   const trophiesRef = useRef(0)
   const streakRef = useRef(0)
+  const previousStreakRef = useRef(0)
 
   const allCapitals = useMemo(() => departmentsData.map(d => d.capital), [])
 
@@ -154,6 +155,8 @@ function CapitalGame({ onBack, onRoundEnd }) {
     const maxLevelIdx = LEVEL_SIZES.length - 1
     const isMaxLevel = streakRef.current >= maxLevelIdx
 
+    previousStreakRef.current = streakRef.current
+
     let levelResult = 'fail'
     if (score >= maxScore * 0.8) {
       levelResult = 'pass'
@@ -175,6 +178,11 @@ function CapitalGame({ onBack, onRoundEnd }) {
   const handlePlayAgain = () => {
     fireworks.stopLoop()
     startNewRound(streakRef.current)
+  }
+
+  const handleRepeatLevel = () => {
+    fireworks.stopLoop()
+    startNewRound(previousStreakRef.current)
   }
 
   const handleBack = () => {
@@ -343,19 +351,11 @@ function CapitalGame({ onBack, onRoundEnd }) {
                     <span><span className="legend-dot" style={{ background: '#FF9100' }}></span> Estudiar</span>
                   </div>
                   <div className="buttons">
+                    <button className="btn btn-secondary" onClick={handleBack}>Salir al menú</button>
+                    <button className="btn" onClick={handleRepeatLevel}>Repetir nivel</button>
                     {resultData.levelResult === 'pass' && !resultData.isMaxLevel && (
                       <button className="btn" onClick={handlePlayAgain}>Siguiente nivel</button>
                     )}
-                    {resultData.levelResult === 'pass' && resultData.isMaxLevel && (() => {
-                      const rank = getRank(resultData.score, resultData.maxScore)
-                      return rank?.name === 'Leyenda Supersónica' ? null : (
-                        <button className="btn" onClick={handlePlayAgain}>Jugar de nuevo</button>
-                      )
-                    })()}
-                    {resultData.levelResult !== 'pass' && (
-                      <button className="btn" onClick={handlePlayAgain}>Intentar de nuevo</button>
-                    )}
-                    <button className="btn btn-secondary" onClick={handleBack}>Volver al menú</button>
                   </div>
                 </div>
               </div>

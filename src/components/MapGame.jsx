@@ -54,6 +54,7 @@ function MapGame({ onBack, onRoundEnd }) {
   const [resultData, setResultData] = useState(null)
   const trophiesRef = useRef(0)
   const streakRef = useRef(0)
+  const previousStreakRef = useRef(0)
   const mapRef = useRef(null)
 
   const startNewRound = useCallback((currentStreak) => {
@@ -161,6 +162,8 @@ function MapGame({ onBack, onRoundEnd }) {
     const maxLevelIdx = LEVEL_SIZES.length - 1
     const isMaxLevel = streakRef.current >= maxLevelIdx
 
+    previousStreakRef.current = streakRef.current
+
     let levelResult = 'fail'
     if (score >= maxScore * 0.8) {
       levelResult = 'pass'
@@ -172,7 +175,6 @@ function MapGame({ onBack, onRoundEnd }) {
     } else if (score >= maxScore * 0.5) {
       levelResult = 'good'
     }
-    // else 'fail' — streak stays the same
 
     setStreak(streakRef.current)
     onRoundEnd('map', score, maxScore)
@@ -183,6 +185,11 @@ function MapGame({ onBack, onRoundEnd }) {
   const handlePlayAgain = () => {
     fireworks.stopLoop()
     startNewRound(streakRef.current)
+  }
+
+  const handleRepeatLevel = () => {
+    fireworks.stopLoop()
+    startNewRound(previousStreakRef.current)
   }
 
   const handleBack = () => {
@@ -313,20 +320,12 @@ function MapGame({ onBack, onRoundEnd }) {
                     <span><span className="legend-dot" style={{ background: '#FF9100' }}></span> Estudiar</span>
                   </div>
                   <div className="buttons">
+                    <button className="btn btn-secondary" onClick={handleBack}>Salir al menú</button>
+                    <button className="btn" onClick={handleRepeatLevel}>Repetir nivel</button>
                     {resultData.levelResult === 'pass' && !resultData.isMaxLevel && (
                       <button className="btn" onClick={handlePlayAgain}>Siguiente nivel</button>
                     )}
-                    {resultData.levelResult === 'pass' && resultData.isMaxLevel && (() => {
-                      const rank = getRank(resultData.score, resultData.maxScore)
-                      return rank?.name === 'Leyenda Supersónica' ? null : (
-                        <button className="btn" onClick={handlePlayAgain}>Jugar de nuevo</button>
-                      )
-                    })()}
-                    {resultData.levelResult !== 'pass' && (
-                      <button className="btn" onClick={handlePlayAgain}>Intentar de nuevo</button>
-                    )}
-                    <button className="btn btn-secondary" onClick={handleBack}>Volver al menú</button>
-                </div>
+                  </div>
               </div>
             </div>
             </div>

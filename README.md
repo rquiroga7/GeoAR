@@ -51,4 +51,4 @@ El proyecto también puede desplegarse automáticamente con GitHub Actions. Ver 
 
 ---
 
-Hecho con ❤️ para que aprender geografía sea más divertido. Por Rodrigo Quiroga ([@rquiroga777](https://x.com/rquiroga777) en Twitter/X).
+Hecho con ❤️ para que aprender geografía sea más divertido. Por Noelia Maldonado y Rodrigo Quiroga ([@rquiroga777](https://x.com/rquiroga777) en Twitter/X).

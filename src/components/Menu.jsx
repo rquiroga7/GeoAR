@@ -37,6 +37,11 @@ function Menu({ onSelectMode }) {
       <h1 className="menu-title">GeoAR</h1>
       <p className="menu-subtitle">Aprendé los departamentos y cabeceras de las provincias Argentinas</p>
 
+      <p className="menu-levels-info">
+        El juego tiene 6 niveles de dificultad con más departamentos por nivel.
+        Usá el menú de nivel en la parte superior para saltear a cualquier nivel en cualquier momento.
+      </p>
+
       <div className="mode-cards">
         <div className="mode-card" onClick={() => onSelectMode('map')}>
           <div className="icon">📍</div>
